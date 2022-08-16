@@ -1,8 +1,6 @@
 package com.example.cleanarchitectureunsplashapp.domain.use_case.getPictures
 
 import com.example.cleanarchitectureunsplashapp.core.Resource
-import com.example.cleanarchitectureunsplashapp.data.mapper.toPicture
-import com.example.cleanarchitectureunsplashapp.data.mapper.toPictureEntity
 import com.example.cleanarchitectureunsplashapp.domain.model.Picture
 import com.example.cleanarchitectureunsplashapp.domain.repository.PictureRepository
 import kotlinx.coroutines.flow.Flow
@@ -17,10 +15,8 @@ class GetPicturesUseCase @Inject constructor(
     operator fun invoke(): Flow<Resource<List<Picture>>> = flow {
         try {
             emit(Resource.Loading<List<Picture>>())
-            val localPictures = repository.getPictures().map {
-                it.toPictureEntity().toPicture()
-            }
-            emit(Resource.Success<List<Picture>>(localPictures))
+            val pictures = repository.getPictures()
+            emit(Resource.Success<List<Picture>>(pictures))
         } catch (e: HttpException) {
             emit(Resource.Error<List<Picture>>(e.localizedMessage ?: "An unexpected error occur"))
         } catch (e: IOException) {

@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface PictureApi {
     @GET("photos/?client_id=${Constants.APP_ID}")
-    fun getRecentPhotos(
+    suspend fun getPictures(
         @Query("page") page: Int,
         @Query("per_page") pageLimit: Int,
         @Query("order_by") order: String

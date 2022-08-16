@@ -1,7 +1,12 @@
 package com.example.cleanarchitectureunsplashapp.di
 
+import android.app.Application
+import androidx.room.Room
 import com.example.cleanarchitectureunsplashapp.core.Constants
+import com.example.cleanarchitectureunsplashapp.data.local.PictureLocalSource
+import com.example.cleanarchitectureunsplashapp.data.local.UnsplashDatabase
 import com.example.cleanarchitectureunsplashapp.data.remote.PictureApi
+import com.example.cleanarchitectureunsplashapp.data.remote.PictureRemoteSource
 import com.example.cleanarchitectureunsplashapp.data.repository.PictureRepositoryImpl
 import com.example.cleanarchitectureunsplashapp.domain.repository.PictureRepository
 import dagger.Module
@@ -24,9 +29,26 @@ object AppModule {
             .create(PictureApi::class.java)
     }
 
+
     @Provides
     @Singleton
-    fun providePictureRepository(api: PictureApi): PictureRepository {
-        return PictureRepositoryImpl(api)
+    fun provideNoteDatabase(app: Application): UnsplashDatabase {
+        return Room.databaseBuilder(
+            app, UnsplashDatabase::class.java, UnsplashDatabase.DATABASE_NAME
+        ).build()
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideUnsplashDao(db: UnsplashDatabase) = db.unsplashDao
+
+    @Provides
+    @Singleton
+    fun providePictureRepository(
+        pictureLocalSource: PictureLocalSource,
+        pictureRemoteSource: PictureRemoteSource
+    ): PictureRepository {
+        return PictureRepositoryImpl(pictureLocalSource, pictureRemoteSource)
     }
 }

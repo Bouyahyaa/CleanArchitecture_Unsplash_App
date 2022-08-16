@@ -4,7 +4,8 @@ import androidx.room.*
 
 @Entity(tableName = "pictures", indices = [Index(value = ["id"], unique = true)])
 data class PictureEntity(
-    @PrimaryKey(autoGenerate = false) val id: Int,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "uuid") val uuid: Int = 0,
+    val id: String,
     val width: String?,
     val height: String?,
     val color: String?,

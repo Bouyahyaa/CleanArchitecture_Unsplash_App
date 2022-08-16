@@ -1,7 +1,7 @@
 package com.example.cleanarchitectureunsplashapp.domain.model
 
 data class Picture(
-    val id: Int,
+    val id: String,
     val width: String?,
     val height: String?,
     val color: String?,
