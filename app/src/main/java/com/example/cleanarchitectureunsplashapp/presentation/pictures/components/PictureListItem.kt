@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -70,24 +72,31 @@ fun PictureListItem(
 
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
-                contentAlignment = Alignment.BottomStart
+                    .height(50.dp)
+                    .width(50.dp)
+                    .padding(8.dp),
+                contentAlignment = Alignment.BottomEnd
             ) {
-
-                Text(
-                    text = title,
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontFamily = fontFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Italic,
-                        textAlign = TextAlign.Center,
-                        textDecoration = TextDecoration.Underline
-                    )
+                Image(
+                    painter = painter,
+                    contentDescription = contentDescription,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.clip(CircleShape)
                 )
             }
         }
     }
 }
+
+//                Text(
+//                    text = title,
+//                    style = TextStyle(
+//                        color = Color.White,
+//                        fontSize = 14.sp,
+//                        fontFamily = fontFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        fontStyle = FontStyle.Italic,
+//                        textAlign = TextAlign.Center,
+//                        textDecoration = TextDecoration.Underline
+//                    )
+//                )
