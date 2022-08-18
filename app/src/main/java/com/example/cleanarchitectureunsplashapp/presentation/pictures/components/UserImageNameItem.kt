@@ -52,7 +52,5 @@ fun UserImageNameItem(
                 )
             )
         }
-
-
     }
 }
