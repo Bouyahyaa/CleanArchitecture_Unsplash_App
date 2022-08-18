@@ -15,31 +15,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.cleanarchitectureunsplashapp.R
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.PictureListItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PictureListScreen(
-    navController: NavController,
-    viewModel: PictureListViewModel = hiltViewModel()
+    navController: NavController, viewModel: PictureListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
-    val fontFamily = FontFamily(
-        Font(R.font.gulzar_regular, FontWeight.Thin)
-    )
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(5.dp)) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(5.dp)
+    ) {
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             cells = GridCells.Fixed(2),
@@ -51,11 +46,11 @@ fun PictureListScreen(
                     mutableStateOf(Color.Black)
                 }
                 PictureListItem(
-                    painter = rememberImagePainter(picture.regular),
+                    painterBaseImage = rememberImagePainter(picture.regular),
+                    painterUserImage = rememberImagePainter(picture.small),
+                    username = picture.username!!,
                     contentDescription = picture.description!!,
-                    title = picture.name!!,
                     color = color,
-                    fontFontFamily = fontFamily
                 )
             }
         }
