@@ -45,7 +45,7 @@ fun UserImageNameItem(
                 text = username,
                 style = TextStyle(
                     color = Color.White,
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Black,
                     fontStyle = FontStyle.Italic,
                     textAlign = TextAlign.Center,
