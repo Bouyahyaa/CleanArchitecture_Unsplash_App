@@ -5,5 +5,7 @@ import com.example.cleanarchitectureunsplashapp.domain.model.Picture
 data class PictureListState(
     val isLoading: Boolean = false,
     val pictures: List<Picture> = emptyList(),
-    val error: String = ""
+    val error: String = "",
+    var searchQuery: String = "",
+    val isRefreshing: Boolean = false,
 )

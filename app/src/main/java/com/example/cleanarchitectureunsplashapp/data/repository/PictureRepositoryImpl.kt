@@ -1,5 +1,6 @@
 package com.example.cleanarchitectureunsplashapp.data.repository
 
+import android.util.Log
 import com.example.cleanarchitectureunsplashapp.data.local.PictureLocalSource
 import com.example.cleanarchitectureunsplashapp.data.mapper.toPicture
 import com.example.cleanarchitectureunsplashapp.data.mapper.toPictureEntity
@@ -12,10 +13,13 @@ class PictureRepositoryImpl @Inject constructor(
     private val pictureLocalSource: PictureLocalSource,
     private val pictureRemoteSource: PictureRemoteSource
 ) : PictureRepository {
-    override suspend fun getPictures(): List<Picture> {
-        val localPictures = pictureLocalSource.getPictures()
+    override suspend fun getPictures(query: String, fetchFromRemote: Boolean): List<Picture> {
+        val localPictures = pictureLocalSource.getPictures(query)
+        val isDbEmpty = localPictures.isEmpty() && query.isBlank()
+        val shouldJustLoadFromCache = !isDbEmpty && !fetchFromRemote
 
-        if (localPictures.isNotEmpty()) {
+        if (shouldJustLoadFromCache) {
+            Log.e("consuming", "locally")
             return localPictures.map { it.toPicture() }
         }
 
@@ -27,6 +31,8 @@ class PictureRepositoryImpl @Inject constructor(
                 pictureLocalSource.insertPicture(pictureEntity)
             }
         }
-        return pictureLocalSource.getPictures().map { it.toPicture() }
+        Log.e("consuming", "remotely")
+
+        return pictureLocalSource.getPictures(query).map { it.toPicture() }
     }
 }

@@ -8,8 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.cleanarchitectureunsplashapp.core.Resource
 import com.example.cleanarchitectureunsplashapp.domain.use_case.getPictures.GetPicturesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,13 +22,39 @@ class PictureListViewModel @Inject constructor(
 
     private val _state = mutableStateOf(PictureListState())
     val state: State<PictureListState> = _state
+    private var searchJob: Job? = null
 
     init {
-        getPictures()
+        getPictures(
+            query = "", fetchFromRemote = false
+        )
     }
 
-    private fun getPictures() {
-        getPicturesUseCase.invoke().onEach { result ->
+    fun onEvent(event: PictureListEvent) {
+        when (event) {
+
+            is PictureListEvent.Refresh -> {
+                getPictures(query = "", fetchFromRemote = true)
+            }
+
+            is PictureListEvent.OnSearchQueryChange -> {
+                _state.value = state.value.copy(
+                    searchQuery = event.query
+                )
+                searchJob?.cancel()
+                searchJob = viewModelScope.launch {
+                    delay(500L)
+                    getPictures(
+                        query = state.value.searchQuery,
+                        fetchFromRemote = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getPictures(query: String, fetchFromRemote: Boolean) {
+        getPicturesUseCase.invoke(query, fetchFromRemote).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = PictureListState(pictures = result.data ?: emptyList())

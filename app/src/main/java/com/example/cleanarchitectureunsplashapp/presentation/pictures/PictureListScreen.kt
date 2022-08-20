@@ -15,79 +15,100 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.PictureListItem
+import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.SearchView
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.StoryListItem
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PictureListScreen(
-    navController: NavController, viewModel: PictureListViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: PictureListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
     val text = remember {
-        mutableStateOf("")
+        mutableStateOf(TextFieldValue(""))
     }
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = state.isRefreshing
+    )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
-    ) {
-        LazyRow {
-            items(state.pictures) { picture ->
-                StoryListItem(
-                    painterStoryImage = rememberImagePainter(picture.large),
-                    contentDescription = picture.description!!,
-                )
-            }
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = {
+            viewModel.onEvent(PictureListEvent.Refresh)
         }
-
-        Box(
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(5.dp)
+                .background(Color.Black),
         ) {
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
-                cells = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
+            LazyRow {
                 items(state.pictures) { picture ->
-                    val color = remember {
-                        mutableStateOf(Color.Black)
-                    }
-                    PictureListItem(
-                        painterBaseImage = rememberImagePainter(picture.regular),
-                        painterUserImage = rememberImagePainter(picture.small),
-                        username = picture.username!!,
+                    StoryListItem(
+                        painterStoryImage = rememberImagePainter(picture.large),
                         contentDescription = picture.description!!,
-                        color = color,
                     )
                 }
             }
 
-            if (state.error.isNotBlank()) {
-                Text(
-                    text = state.error,
-                    color = MaterialTheme.colors.error,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                )
-            }
+            SearchView(state = text, onTextChanged = {
+                viewModel.onEvent(PictureListEvent.OnSearchQueryChange(text.value.text))
+            })
 
-            if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+            Spacer(modifier = Modifier.size(7.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(5.dp)
+            ) {
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    cells = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    items(state.pictures) { picture ->
+                        val color = remember {
+                            mutableStateOf(Color.Black)
+                        }
+                        PictureListItem(
+                            painterBaseImage = rememberImagePainter(picture.regular),
+                            painterUserImage = rememberImagePainter(picture.small),
+                            username = picture.username!!,
+                            contentDescription = picture.description!!,
+                            color = color,
+                        )
+                    }
+                }
+
+                if (state.error.isNotBlank()) {
+                    Text(
+                        text = state.error,
+                        color = MaterialTheme.colors.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                    )
+                }
+
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
     }

@@ -12,15 +12,20 @@ import javax.inject.Inject
 class GetPicturesUseCase @Inject constructor(
     private val repository: PictureRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<Picture>>> = flow {
-        try {
-            emit(Resource.Loading<List<Picture>>())
-            val pictures = repository.getPictures()
-            emit(Resource.Success<List<Picture>>(pictures))
-        } catch (e: HttpException) {
-            emit(Resource.Error<List<Picture>>(e.localizedMessage ?: "An unexpected error occur"))
-        } catch (e: IOException) {
-            emit(Resource.Error<List<Picture>>("Couldn't reach server . Check your internet connection"))
+    operator fun invoke(query: String, fetchFromRemote: Boolean): Flow<Resource<List<Picture>>> =
+        flow {
+            try {
+                emit(Resource.Loading<List<Picture>>())
+                val pictures = repository.getPictures(query, fetchFromRemote)
+                emit(Resource.Success<List<Picture>>(pictures))
+            } catch (e: HttpException) {
+                emit(
+                    Resource.Error<List<Picture>>(
+                        e.localizedMessage ?: "An unexpected error occur"
+                    )
+                )
+            } catch (e: IOException) {
+                emit(Resource.Error<List<Picture>>("Couldn't reach server . Check your internet connection"))
+            }
         }
-    }
 }

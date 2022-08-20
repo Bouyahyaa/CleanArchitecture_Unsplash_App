@@ -5,7 +5,7 @@ import javax.inject.Inject
 class PictureLocalSource @Inject constructor(
     private val dao: UnsplashDao
 ) {
-    suspend fun getPictures(): List<PictureEntity> = dao.getPictures()
+    suspend fun getPictures(query: String): List<PictureEntity> = dao.getPictures(query)
 
     suspend fun insertPicture(pictureEntity: PictureEntity) = dao.insertPicture(pictureEntity)
 

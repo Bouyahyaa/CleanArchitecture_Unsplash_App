@@ -5,8 +5,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UnsplashDao {
-    @Query("SELECT * FROM pictures")
-    suspend fun getPictures(): List<PictureEntity>
+    @Query(
+        """
+            SELECT * 
+            FROM pictures
+            WHERE LOWER(username) LIKE '%' || LOWER(:query) || '%' OR
+                UPPER(:query) == username
+        """
+    )
+    suspend fun getPictures(query: String): List<PictureEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPicture(picture: PictureEntity)
