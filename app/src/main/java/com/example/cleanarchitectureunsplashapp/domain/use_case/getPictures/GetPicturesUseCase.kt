@@ -15,7 +15,9 @@ class GetPicturesUseCase @Inject constructor(
     operator fun invoke(query: String, fetchFromRemote: Boolean): Flow<Resource<List<Picture>>> =
         flow {
             try {
-                emit(Resource.Loading<List<Picture>>())
+                if (fetchFromRemote) {
+                    emit(Resource.Loading<List<Picture>>())
+                }
                 val pictures = repository.getPictures(query, fetchFromRemote)
                 emit(Resource.Success<List<Picture>>(pictures))
             } catch (e: HttpException) {

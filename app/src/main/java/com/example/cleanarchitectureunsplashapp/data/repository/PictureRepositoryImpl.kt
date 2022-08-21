@@ -17,6 +17,8 @@ class PictureRepositoryImpl @Inject constructor(
         val localPictures = pictureLocalSource.getPictures(query)
         val isDbEmpty = localPictures.isEmpty() && query.isBlank()
         val shouldJustLoadFromCache = !isDbEmpty && !fetchFromRemote
+        Log.e("shouldJustLoadFromCache", "$shouldJustLoadFromCache")
+
 
         if (shouldJustLoadFromCache) {
             Log.e("consuming", "locally")
@@ -34,5 +36,10 @@ class PictureRepositoryImpl @Inject constructor(
         Log.e("consuming", "remotely")
 
         return pictureLocalSource.getPictures(query).map { it.toPicture() }
+    }
+
+    override suspend fun deletePictures(picture: Picture) {
+        val pictureEntity = picture.toPictureEntity()
+        pictureLocalSource.deletePicture(pictureEntity)
     }
 }

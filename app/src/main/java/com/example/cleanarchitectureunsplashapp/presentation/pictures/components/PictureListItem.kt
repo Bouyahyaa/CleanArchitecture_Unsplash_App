@@ -5,9 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -23,6 +26,7 @@ fun PictureListItem(
     username: String,
     contentDescription: String,
     color: MutableState<Color>,
+    onDeleteClick: () -> Unit
 ) {
 
     Card(
@@ -34,6 +38,7 @@ fun PictureListItem(
                 contentDescription = contentDescription,
                 contentScale = ContentScale.Crop
             )
+
             Box(modifier = Modifier
                 .background(
                     Brush.verticalGradient(
@@ -47,7 +52,18 @@ fun PictureListItem(
                     color.value = Color(
                         Random.nextFloat(), Random.nextFloat(), Random.nextFloat(), 1f
                     )
-                })
+                }) {
+                IconButton(
+                    onClick = onDeleteClick,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete Picture",
+                        tint = MaterialTheme.colors.onSurface
+                    )
+                }
+            }
 
             Box(
                 modifier = Modifier

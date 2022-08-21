@@ -1,6 +1,8 @@
 package com.example.cleanarchitectureunsplashapp.presentation.pictures
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,8 +34,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PictureListScreen(
-    navController: NavController,
-    viewModel: PictureListViewModel = hiltViewModel()
+    navController: NavController, viewModel: PictureListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
     val text = remember {
@@ -42,12 +44,9 @@ fun PictureListScreen(
         isRefreshing = state.isRefreshing
     )
 
-    SwipeRefresh(
-        state = swipeRefreshState,
-        onRefresh = {
-            viewModel.onEvent(PictureListEvent.Refresh)
-        }
-    ) {
+    SwipeRefresh(state = swipeRefreshState, onRefresh = {
+        viewModel.onEvent(PictureListEvent.Refresh)
+    }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,13 +82,16 @@ fun PictureListScreen(
                         val color = remember {
                             mutableStateOf(Color.Black)
                         }
-                        PictureListItem(
-                            painterBaseImage = rememberImagePainter(picture.regular),
+                        PictureListItem(painterBaseImage = rememberImagePainter(picture.regular),
                             painterUserImage = rememberImagePainter(picture.small),
                             username = picture.username!!,
                             contentDescription = picture.description!!,
                             color = color,
-                        )
+                            onDeleteClick = {
+                                viewModel.onEvent(
+                                    PictureListEvent.DeletePicture(picture, text.value.text)
+                                )
+                            })
                     }
                 }
 

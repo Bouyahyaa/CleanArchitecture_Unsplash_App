@@ -2,9 +2,9 @@ package com.example.cleanarchitectureunsplashapp.data.local
 
 import androidx.room.*
 
-@Entity(tableName = "pictures", indices = [Index(value = ["id"], unique = true)])
+@Entity(tableName = "pictures")
 data class PictureEntity(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "uuid") val uuid: Int = 0,
+    @PrimaryKey(autoGenerate = false)
     val id: String,
     val width: String?,
     val height: String?,

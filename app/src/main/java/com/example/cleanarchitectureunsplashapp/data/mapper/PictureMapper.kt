@@ -27,6 +27,31 @@ fun PictureEntity.toPicture(): Picture {
     )
 }
 
+
+fun Picture.toPictureEntity(): PictureEntity {
+    return PictureEntity(
+        id = id,
+        width = width,
+        height = height,
+        color = color,
+        created_at = created_at,
+        updated_at = updated_at,
+        description = description,
+        raw = raw,
+        full = full,
+        regular = regular,
+        thumb = thumb,
+        idUser = idUser,
+        username = username,
+        name = name,
+        small = small,
+        medium = medium,
+        large = large,
+        likes = likes,
+    )
+}
+
+
 fun PictureDto.toPictureEntity(): PictureEntity {
     return PictureEntity(
         id = id!!,

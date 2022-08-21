@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cleanarchitectureunsplashapp.core.Resource
+import com.example.cleanarchitectureunsplashapp.domain.use_case.DeletePictures.DeletePicturesUseCase
 import com.example.cleanarchitectureunsplashapp.domain.use_case.getPictures.GetPicturesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PictureListViewModel @Inject constructor(
-    private val getPicturesUseCase: GetPicturesUseCase
+    private val getPicturesUseCase: GetPicturesUseCase,
+    private val deletePicturesUseCase: DeletePicturesUseCase
 ) : ViewModel() {
 
     private val _state = mutableStateOf(PictureListState())
@@ -26,7 +28,7 @@ class PictureListViewModel @Inject constructor(
 
     init {
         getPictures(
-            query = "", fetchFromRemote = false
+            query = "", fetchFromRemote = true
         )
     }
 
@@ -48,6 +50,13 @@ class PictureListViewModel @Inject constructor(
                         query = state.value.searchQuery,
                         fetchFromRemote = false
                     )
+                }
+            }
+
+            is PictureListEvent.DeletePicture -> {
+                viewModelScope.launch {
+                    deletePicturesUseCase.invoke(event.picture)
+                    getPictures(event.query, false)
                 }
             }
         }
