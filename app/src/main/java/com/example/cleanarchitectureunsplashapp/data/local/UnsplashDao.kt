@@ -1,7 +1,6 @@
 package com.example.cleanarchitectureunsplashapp.data.local
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UnsplashDao {
