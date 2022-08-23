@@ -19,12 +19,13 @@ class PictureRepositoryImpl @Inject constructor(
     private val pictureLocalSource: PictureLocalSource,
     private val pictureRemoteSource: PictureRemoteSource
 ) : PictureRepository {
+
     override fun getPictures(
         query: String,
         fetchFromRemote: Boolean
     ): Flow<Resource<List<Picture>>> = flow {
         if (fetchFromRemote) {
-            emit(Resource.Loading(true))
+            emit(Resource.Loading<List<Picture>>())
         }
         val localPictures = pictureLocalSource.getPictures(query)
         var remotePictures: List<PictureDto> = emptyList()
@@ -41,10 +42,10 @@ class PictureRepositoryImpl @Inject constructor(
                 remotePictures = pictureRemoteSource.getPictures()
             } catch (e: IOException) {
                 e.printStackTrace()
-                emit(Resource.Error("Couldn't load data"))
+                emit(Resource.Error<List<Picture>>("Couldn't load data"))
             } catch (e: HttpException) {
                 e.printStackTrace()
-                emit(Resource.Error("Couldn't load data"))
+                emit(Resource.Error<List<Picture>>("Couldn't load data"))
             }
 
             remotePictures.let { pictures ->
@@ -52,21 +53,22 @@ class PictureRepositoryImpl @Inject constructor(
                 pictures.map {
                     pictureLocalSource.insertPicture(it.toPictureEntity())
                 }
-                emit(
-                    Resource.Success(
-                        data = pictureLocalSource.getPictures(query).map {
-                            it.toPicture()
-                        }
-                    )
-                )
-                emit(Resource.Loading(false))
             }
         }
-    }
 
+        emit(
+            Resource.Success<List<Picture>>(
+                data = pictureLocalSource.getPictures(query).map {
+                    it.toPicture()
+                }
+            )
+        )
+
+    }
 
     override suspend fun deletePictures(picture: Picture) {
         val pictureEntity = picture.toPictureEntity()
         pictureLocalSource.deletePicture(pictureEntity)
     }
+
 }

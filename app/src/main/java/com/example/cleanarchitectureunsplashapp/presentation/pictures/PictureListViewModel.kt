@@ -1,5 +1,6 @@
 package com.example.cleanarchitectureunsplashapp.presentation.pictures
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,10 @@ import com.example.cleanarchitectureunsplashapp.domain.use_case.getPictures.GetP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +27,6 @@ class PictureListViewModel @Inject constructor(
     private val _state = mutableStateOf(PictureListState())
     val state: State<PictureListState> = _state
     private var searchJob: Job? = null
-    private var getJob: Job? = null
 
     init {
         getPictures(
@@ -45,8 +49,7 @@ class PictureListViewModel @Inject constructor(
                 searchJob = viewModelScope.launch {
                     delay(500L)
                     getPictures(
-                        query = state.value.searchQuery,
-                        fetchFromRemote = false
+                        query = state.value.searchQuery, fetchFromRemote = false
                     )
                 }
             }
@@ -54,6 +57,7 @@ class PictureListViewModel @Inject constructor(
             is PictureListEvent.DeletePicture -> {
                 viewModelScope.launch {
                     deletePicturesUseCase.invoke(event.picture)
+                    getPictures(query = event.query, fetchFromRemote = false)
                 }
             }
         }
@@ -61,41 +65,32 @@ class PictureListViewModel @Inject constructor(
 
     private fun getPictures(query: String, fetchFromRemote: Boolean) {
         viewModelScope.launch {
-            getPicturesUseCase
-                .invoke(query, fetchFromRemote)
-                .collect { result ->
-                    when (result) {
-                        is Resource.Success -> {
+            getPicturesUseCase.invoke(query, fetchFromRemote).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
 
-                            _state.value = state.value.copy(
-                                isLoading = false,
-                                pictures = result.data ?: emptyList(),
-                                error = "",
-                                searchQuery = "",
-                                isRefreshing = false,
-                            )
+                        Log.e("dataPictures", "${result.data}")
 
-                        }
-                        is Resource.Error ->
-                            _state.value = state.value.copy(
-                                isLoading = false,
-                                pictures = emptyList(),
-                                error = result.message ?: "An unexpected error occur ",
-                                searchQuery = "",
-                                isRefreshing = false,
-                            )
+                        _state.value = PictureListState(
+                            pictures = result.data ?: emptyList(),
+                        )
 
-                        is Resource.Loading -> {
-                            _state.value = state.value.copy(
-                                isLoading = result.isLoading,
-                                pictures = emptyList(),
-                                error = "",
-                                searchQuery = "",
-                                isRefreshing = false,
-                            )
-                        }
+                    }
+                    is Resource.Error -> _state.value = PictureListState(
+                        error = result.message ?: "An unexpected error occur ",
+                    )
+
+                    is Resource.Loading -> {
+
+                        Log.e("dataPictures", "${result.data}")
+
+                        _state.value = PictureListState(
+                            isLoading = true,
+                        )
                     }
                 }
+            }
         }
     }
+
 }
