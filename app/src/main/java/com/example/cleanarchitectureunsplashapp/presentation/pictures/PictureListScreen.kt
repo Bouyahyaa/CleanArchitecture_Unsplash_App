@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.cleanarchitectureunsplashapp.presentation.Screen
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.PictureListItem
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.SearchView
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.StoryListItem
@@ -31,7 +32,8 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PictureListScreen(
-    navController: NavController, viewModel: PictureListViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: PictureListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
     val text = remember {
@@ -54,6 +56,9 @@ fun PictureListScreen(
                     StoryListItem(
                         painterStoryImage = rememberImagePainter(picture.large),
                         contentDescription = picture.description!!,
+                        onItemClick = {
+                            navController.navigate(Screen.StoriesScreen.route)
+                        }
                     )
                 }
             }

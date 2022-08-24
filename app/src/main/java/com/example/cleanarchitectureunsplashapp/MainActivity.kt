@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.cleanarchitectureunsplashapp.presentation.Screen
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.PictureListScreen
+import com.example.cleanarchitectureunsplashapp.presentation.stories.StoriesScreen
 import com.example.cleanarchitectureunsplashapp.ui.theme.CleanArchitectureUnsplashAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +34,10 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(route = Screen.PictureListScreen.route) {
                             PictureListScreen(navController = navController)
+                        }
+
+                        composable(route = Screen.StoriesScreen.route) {
+                            StoriesScreen()
                         }
                     }
                 }
