@@ -116,4 +116,7 @@ dependencies {
 
     //Stories
     implementation 'com.github.raipankaj:Stories:1.0.0'
+
+    //ViewPager
+    implementation "com.google.accompanist:accompanist-pager:0.16.0"
 }

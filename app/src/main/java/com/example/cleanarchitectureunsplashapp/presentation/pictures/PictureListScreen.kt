@@ -57,7 +57,14 @@ fun PictureListScreen(
                         painterStoryImage = rememberImagePainter(picture.large),
                         contentDescription = picture.description!!,
                         onItemClick = {
-                            navController.navigate(Screen.StoriesScreen.route)
+                            navController.navigate(
+                                Screen.StoriesScreen.route + "/${
+                                    picture.regular?.replace(
+                                        ":",
+                                        "%3A"
+                                    )?.replace("/", "%2F")
+                                }"
+                            )
                         }
                     )
                 }
@@ -84,7 +91,8 @@ fun PictureListScreen(
                         val color = remember {
                             mutableStateOf(Color.Black)
                         }
-                        PictureListItem(painterBaseImage = rememberImagePainter(picture.regular),
+                        PictureListItem(
+                            painterBaseImage = rememberImagePainter(picture.regular),
                             painterUserImage = rememberImagePainter(picture.small),
                             username = picture.username!!,
                             contentDescription = picture.description!!,

@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.cleanarchitectureunsplashapp.presentation.Screen
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.PictureListScreen
 import com.example.cleanarchitectureunsplashapp.presentation.stories.StoriesScreen
@@ -36,8 +38,19 @@ class MainActivity : ComponentActivity() {
                             PictureListScreen(navController = navController)
                         }
 
-                        composable(route = Screen.StoriesScreen.route) {
-                            StoriesScreen()
+                        composable(
+                            route = Screen.StoriesScreen.route + "/{pictureUrl}",
+                            arguments = listOf(
+                                navArgument("pictureUrl") {
+                                    type = NavType.StringType
+                                    defaultValue = ""
+                                    nullable = true
+                                }
+                            )
+                        ) { entry ->
+                            StoriesScreen(
+                                pictureUrl = entry.arguments?.getString("pictureUrl")!!
+                            )
                         }
                     }
                 }
