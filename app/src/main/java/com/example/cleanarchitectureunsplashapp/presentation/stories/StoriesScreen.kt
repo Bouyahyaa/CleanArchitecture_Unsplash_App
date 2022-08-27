@@ -1,6 +1,5 @@
 package com.example.cleanarchitectureunsplashapp.presentation.stories
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -14,41 +13,57 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun StoriesScreen(
-    pictureUrl: String?
+    pictureUrl: String?,
+    userPictureUrl: String?,
 ) {
+
+    val basePicture = pictureUrl?.replace(
+        "%3A",
+        ":"
+    )?.replace("%2F", "/")
+
+    val userPicture = userPictureUrl?.replace(
+        "%3A",
+        ":"
+    )?.replace("%2F", "/")
+
     val listImages = listOf(
-        pictureUrl?.replace(
-            "%3A",
-            ":"
-        )?.replace("%2F", "/")
+        basePicture, userPicture
     )
     val pagerState = rememberPagerState(pageCount = listImages.size)
     val coroutineScope = rememberCoroutineScope()
     var currentPage by remember {
         mutableStateOf(0)
     }
+    val pictureLoaded = remember {
+        mutableStateOf(false)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        StoryImage(pagerState = pagerState, listOfImages = listImages)
+        StoryImage(
+            pagerState = pagerState,
+            listOfImages = listImages,
+            pictureLoaded = pictureLoaded
+        )
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Spacer(modifier = Modifier.padding(4.dp))
 
             for (index in listImages.indices) {
                 LinearIndicator(
-                    modifier = Modifier.weight(1f), startProgress = index == currentPage
+                    modifier = Modifier.weight(1f),
+                    startProgress = index == currentPage && pictureLoaded.value
                 ) {
                     coroutineScope.launch {
                         if (currentPage < listImages.size - 1) {
                             currentPage++
                         }
-                        Log.e("currentPage", "$currentPage")
                         pagerState.animateScrollToPage(currentPage)
                     }
                 }
-
                 Spacer(modifier = Modifier.padding(4.dp))
             }
         }

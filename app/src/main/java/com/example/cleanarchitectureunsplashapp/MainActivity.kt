@@ -39,9 +39,14 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = Screen.StoriesScreen.route + "/{pictureUrl}",
+                            route = Screen.StoriesScreen.route + "/{pictureUrl}/{userPictureUrl}",
                             arguments = listOf(
                                 navArgument("pictureUrl") {
+                                    type = NavType.StringType
+                                    defaultValue = ""
+                                    nullable = true
+                                },
+                                navArgument("userPictureUrl") {
                                     type = NavType.StringType
                                     defaultValue = ""
                                     nullable = true
@@ -49,7 +54,8 @@ class MainActivity : ComponentActivity() {
                             )
                         ) { entry ->
                             StoriesScreen(
-                                pictureUrl = entry.arguments?.getString("pictureUrl")!!
+                                pictureUrl = entry.arguments?.getString("pictureUrl")!!,
+                                userPictureUrl = entry.arguments?.getString("userPictureUrl")!!
                             )
                         }
                     }

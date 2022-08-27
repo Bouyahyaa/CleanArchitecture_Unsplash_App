@@ -63,6 +63,11 @@ fun PictureListScreen(
                                         ":",
                                         "%3A"
                                     )?.replace("/", "%2F")
+                                }" + "/${
+                                    picture.large?.replace(
+                                        ":",
+                                        "%3A"
+                                    )?.replace("/", "%2F")
                                 }"
                             )
                         }

@@ -1,5 +1,6 @@
 package com.example.cleanarchitectureunsplashapp.presentation.stories.components
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,9 @@ import kotlinx.coroutines.delay
 fun LinearIndicator(
     modifier: Modifier, startProgress: Boolean = false, onAnimationEnd: () -> Unit
 ) {
+
+    Log.e("pictureLoaded", "$startProgress")
+
 
     var progress by remember {
         mutableStateOf(0.00f)
