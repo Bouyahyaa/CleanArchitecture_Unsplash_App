@@ -1,6 +1,5 @@
 package com.example.cleanarchitectureunsplashapp.presentation.stories.components
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,24 +10,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.cleanarchitectureunsplashapp.util.Pager
 import kotlinx.coroutines.delay
 
 @Composable
 fun LinearIndicator(
-    modifier: Modifier, startProgress: Boolean = false, onAnimationEnd: () -> Unit
+    modifier: Modifier,
+    startProgress: Boolean = false,
+    isPressed: Boolean,
+    actionPage: Pager,
+    onAnimationEnd: () -> Unit
 ) {
-
-    Log.e("pictureLoaded", "$startProgress")
-
 
     var progress by remember {
         mutableStateOf(0.00f)
     }
 
     val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+        targetValue = progress, animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
+
+    if (isPressed) {
+        progress = if (actionPage == Pager.NEXT_PAGE) {
+            1f
+        } else {
+            0.00f
+        }
+    }
 
     if (startProgress) {
         LaunchedEffect(key1 = Unit) {
