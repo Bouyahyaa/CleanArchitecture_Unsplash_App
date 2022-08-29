@@ -34,7 +34,7 @@ fun StoryImage(
 
         val painter = rememberImagePainter(data = listOfImages[pagerState.currentPage])
         val painterState = painter.state
-        Log.e("pictureLoaded", "${page}")
+        Log.e("pictureLoaded", "$page")
 
         if (page == pagerState.currentPage) {
             pictureLoaded.value = painterState !is ImagePainter.State.Loading

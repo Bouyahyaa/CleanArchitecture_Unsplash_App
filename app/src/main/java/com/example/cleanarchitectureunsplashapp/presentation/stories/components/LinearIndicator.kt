@@ -10,15 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.cleanarchitectureunsplashapp.util.Pager
 import kotlinx.coroutines.delay
 
 @Composable
 fun LinearIndicator(
     modifier: Modifier,
     startProgress: Boolean = false,
-    isPressed: Boolean,
-    actionPage: Pager,
     onAnimationEnd: () -> Unit
 ) {
 
@@ -29,14 +26,6 @@ fun LinearIndicator(
     val animatedProgress by animateFloatAsState(
         targetValue = progress, animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
-
-    if (isPressed) {
-        progress = if (actionPage == Pager.NEXT_PAGE) {
-            1f
-        } else {
-            0.00f
-        }
-    }
 
     if (startProgress) {
         LaunchedEffect(key1 = Unit) {
