@@ -43,7 +43,7 @@ fun StoriesScreen(
     }
 
     val pictureLoaded = remember {
-        mutableStateOf(false)
+        mutableStateOf(0 to false)
     }
 
     val isPressed = remember { mutableStateOf(false) }
@@ -55,7 +55,6 @@ fun StoriesScreen(
                 .fillMaxSize()
                 .pointerInput(Unit) {
                     val maxWidth = this.size.width // (2)
-                    Log.e("offestX", "${maxWidth}")
                     detectTapGestures(
                         onPress = {
                             val pressStartTime = System.currentTimeMillis()
@@ -79,7 +78,9 @@ fun StoriesScreen(
                 },
             pagerState = pagerState,
             listOfImages = listImages,
-            pictureLoaded = pictureLoaded
+            startProgress = {
+                pictureLoaded.value = it to true
+            }
         )
 
         Row(
@@ -90,9 +91,8 @@ fun StoriesScreen(
             for (index in listImages.indices) {
                 LinearIndicator(
                     modifier = Modifier.weight(1f),
-                    startProgress = pictureLoaded.value && index == currentPage,
+                    startProgress = pictureLoaded.value.second && index == pictureLoaded.value.first,
                 ) {
-                    Log.e("animationEnd", "animationEnd")
                     coroutineScope.launch {
                         if (currentPage < listImages.size - 1) {
                             currentPage++
