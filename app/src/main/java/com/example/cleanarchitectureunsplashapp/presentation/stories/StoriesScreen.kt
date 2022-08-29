@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.cleanarchitectureunsplashapp.presentation.Screen
 import com.example.cleanarchitectureunsplashapp.presentation.stories.components.LinearIndicator
 import com.example.cleanarchitectureunsplashapp.presentation.stories.components.StoryImage
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 fun StoriesScreen(
     pictureUrl: String?,
     userPictureUrl: String?,
+    navController: NavController,
 ) {
 
     val basePicture = pictureUrl?.replace(
@@ -42,7 +45,7 @@ fun StoriesScreen(
         mutableStateOf(0)
     }
 
-    val pictureLoaded = remember {
+    val progress = remember {
         mutableStateOf(0 to false)
     }
 
@@ -66,8 +69,16 @@ fun StoriesScreen(
                                 val isTapOnRightTwoTiers = (it.x > (maxWidth / 4)) // (6)
                                 if (isTapOnRightTwoTiers) {
                                     Log.e("TapFinger", "right")
+                                    if (currentPage < listImages.size - 1) {
+                                        currentPage++
+                                    }
+                                    pagerState.animateScrollToPage(currentPage)
                                 } else {
                                     Log.e("TapFinger", "left")
+                                    if (currentPage > 0) {
+                                        currentPage--
+                                    }
+                                    pagerState.animateScrollToPage(currentPage)
                                 }
                             }
                             isPressed.value = false
@@ -79,7 +90,7 @@ fun StoriesScreen(
             pagerState = pagerState,
             listOfImages = listImages,
             startProgress = {
-                pictureLoaded.value = it to true
+                progress.value = it to true
             }
         )
 
@@ -91,13 +102,16 @@ fun StoriesScreen(
             for (index in listImages.indices) {
                 LinearIndicator(
                     modifier = Modifier.weight(1f),
-                    startProgress = pictureLoaded.value.second && index == pictureLoaded.value.first,
+                    onProgress = progress.value,
+                    index = index
                 ) {
                     coroutineScope.launch {
                         if (currentPage < listImages.size - 1) {
                             currentPage++
+                            pagerState.animateScrollToPage(currentPage)
+                        } else {
+                            navController.navigate(Screen.PictureListScreen.route)
                         }
-                        pagerState.animateScrollToPage(currentPage)
                     }
                 }
                 Spacer(modifier = Modifier.padding(4.dp))

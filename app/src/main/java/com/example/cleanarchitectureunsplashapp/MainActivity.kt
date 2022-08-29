@@ -55,7 +55,8 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             StoriesScreen(
                                 pictureUrl = entry.arguments?.getString("pictureUrl")!!,
-                                userPictureUrl = entry.arguments?.getString("userPictureUrl")!!
+                                userPictureUrl = entry.arguments?.getString("userPictureUrl")!!,
+                                navController = navController
                             )
                         }
                     }
