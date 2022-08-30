@@ -11,6 +11,7 @@ import androidx.compose.ui.layout.ContentScale
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
+import com.example.cleanarchitectureunsplashapp.domain.model.Story
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -20,8 +21,8 @@ import com.google.accompanist.pager.PagerState
 fun StoryImage(
     modifier: Modifier,
     pagerState: PagerState,
-    listOfImages: List<String?>,
-    startProgress: (Int) -> Unit,
+    listOfStories: List<Story>,
+    setImageLoaded: (String) -> Unit,
 ) {
     HorizontalPager(
         state = pagerState,
@@ -29,7 +30,7 @@ fun StoryImage(
         modifier = modifier
     ) { page ->
 
-        val painter = rememberImagePainter(data = listOfImages[page])
+        val painter = rememberImagePainter(data = listOfStories[page].picture)
         val painterState = painter.state
 
         Image(
@@ -39,7 +40,7 @@ fun StoryImage(
             modifier = Modifier.fillMaxWidth()
         )
         if (painterState is ImagePainter.State.Success) {
-            startProgress(currentPage)
+            setImageLoaded(listOfStories[currentPage].id)
         } else {
             CircularProgressIndicator(
                 color = Color.LightGray,

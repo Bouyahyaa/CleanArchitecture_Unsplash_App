@@ -13,16 +13,16 @@ import kotlinx.coroutines.delay
 @Composable
 fun LinearIndicator(
     modifier: Modifier,
-    onProgress: Pair<Int, Boolean>,
-    index: Int,
+    progressValue: Float,
+    startProgress: Boolean,
     onAnimationEnd: () -> (Unit),
 ) {
 
     val progress = remember {
-        mutableStateOf(0.00f)
+        mutableStateOf(progressValue)
     }
 
-    if (onProgress.second && onProgress.first == index) {
+    if (startProgress) {
         LaunchedEffect(key1 = Unit) {
             progress.value = 0.00f
             while (progress.value < 1f) {
@@ -33,21 +33,13 @@ fun LinearIndicator(
         }
     }
 
-    val targetProgress = if (onProgress.first > index) {
-        1f
-    } else if (onProgress.first < index) {
-        0.00f
-    } else {
-        progress.value
-    }
-
     LinearProgressIndicator(
         backgroundColor = Color.LightGray,
         color = Color.White,
         modifier = modifier
             .padding(top = 12.dp, bottom = 12.dp)
             .clip(RoundedCornerShape(12.dp)),
-        progress = targetProgress
+        progress = progress.value
     )
 
 
