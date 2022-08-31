@@ -24,7 +24,6 @@ fun LinearIndicator(
 
     if (startProgress) {
         LaunchedEffect(key1 = Unit) {
-            progress.value = 0.00f
             while (progress.value < 1f) {
                 progress.value += 0.01f
                 delay(50)

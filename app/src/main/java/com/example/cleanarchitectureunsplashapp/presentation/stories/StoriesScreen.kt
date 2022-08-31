@@ -46,7 +46,7 @@ fun StoriesScreen(
 
     val state = viewModel.state.value
 
-    val pagerState = rememberPagerState(pageCount = listImages.size)
+    val pagerState = rememberPagerState(pageCount = state.stories.size)
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -74,16 +74,18 @@ fun StoriesScreen(
                                 val isTapOnRightTwoTiers = (it.x > (maxWidth / 4)) // (6)
                                 if (isTapOnRightTwoTiers) {
                                     Log.e("TapFinger", "right")
-                                    if (currentPage < listImages.size - 1) {
+                                    if (currentPage < state.stories.size - 1) {
+                                        viewModel.onEvent(StoriesEvent.RightTap(currentPage))
                                         currentPage++
+                                        pagerState.animateScrollToPage(currentPage)
                                     }
-                                    pagerState.animateScrollToPage(currentPage)
                                 } else {
                                     Log.e("TapFinger", "left")
                                     if (currentPage > 0) {
+                                        viewModel.onEvent(StoriesEvent.RightTap(currentPage))
                                         currentPage--
+                                        pagerState.animateScrollToPage(currentPage)
                                     }
-                                    pagerState.animateScrollToPage(currentPage)
                                 }
                             }
                             isPressed.value = false
@@ -106,7 +108,7 @@ fun StoriesScreen(
                 LinearIndicator(
                     modifier = Modifier.width(175.dp),
                     progressValue = story.progress,
-                    startProgress = true
+                    startProgress = story.isLoaded
                 ) {
                     coroutineScope.launch {
                         if (currentPage < state.stories.size - 1) {
