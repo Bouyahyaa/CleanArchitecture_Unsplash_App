@@ -82,7 +82,7 @@ fun StoriesScreen(
                                 } else {
                                     Log.e("TapFinger", "left")
                                     if (currentPage > 0) {
-                                        viewModel.onEvent(StoriesEvent.RightTap(currentPage))
+                                        viewModel.onEvent(StoriesEvent.LeftTap(currentPage))
                                         currentPage--
                                         pagerState.animateScrollToPage(currentPage)
                                     }
@@ -112,6 +112,7 @@ fun StoriesScreen(
                 ) {
                     coroutineScope.launch {
                         if (currentPage < state.stories.size - 1) {
+                            viewModel.onEvent(StoriesEvent.RightTap(currentPage))
                             currentPage++
                             pagerState.animateScrollToPage(currentPage)
                         } else {

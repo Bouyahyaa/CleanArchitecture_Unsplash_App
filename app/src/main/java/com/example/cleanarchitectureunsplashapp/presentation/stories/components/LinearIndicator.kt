@@ -32,6 +32,10 @@ fun LinearIndicator(
         }
     }
 
+    if (!startProgress) {
+        progress.value = progressValue
+    }
+
     LinearProgressIndicator(
         backgroundColor = Color.LightGray,
         color = Color.White,
