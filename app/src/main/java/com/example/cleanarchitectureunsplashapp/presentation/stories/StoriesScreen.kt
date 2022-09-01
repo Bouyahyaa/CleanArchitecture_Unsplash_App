@@ -2,16 +2,16 @@ package com.example.cleanarchitectureunsplashapp.presentation.stories
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cleanarchitectureunsplashapp.presentation.Screen
@@ -39,7 +39,7 @@ fun StoriesScreen(
     )?.replace("%2F", "/")
 
     val listImages = listOf(
-        basePicture, userPicture
+        basePicture, userPicture, basePicture, userPicture
     )
 
     viewModel.onEvent(StoriesEvent.GetStories(listOfImages = listImages))
@@ -54,7 +54,11 @@ fun StoriesScreen(
         mutableStateOf(0)
     }
 
-    val isPressed = remember { mutableStateOf(false) }
+    var pauseTimer by remember {
+        mutableStateOf(false)
+    }
+
+    val alpha: Float by animateFloatAsState(if (!pauseTimer) 1f else 0.00f)
 
     Box(modifier = Modifier.fillMaxSize()) {
         StoryImage(
@@ -66,8 +70,8 @@ fun StoriesScreen(
                     detectTapGestures(
                         onPress = {
                             val pressStartTime = System.currentTimeMillis()
-                            isPressed.value = true
-                            this.tryAwaitRelease() // (4)
+                            awaitRelease() // (4)
+                            pauseTimer = false
                             val pressEndTime = System.currentTimeMillis()
                             val totalPressTime = pressEndTime - pressStartTime // (5)
                             if (totalPressTime < 200) {
@@ -88,27 +92,30 @@ fun StoriesScreen(
                                     }
                                 }
                             }
-                            isPressed.value = false
                         },
                         onLongPress = {
-                            Log.e("TapFinger", "LongPressed")
-                        })
+                            pauseTimer = true
+                        }
+                    )
                 },
             pagerState = pagerState,
             listOfStories = state.stories,
             setImageLoaded = { id ->
                 viewModel.onEvent(StoriesEvent.ImageLoaded(id = id))
-            }
+            },
         )
 
-        LazyRow {
-            items(state.stories) { story ->
-                Spacer(modifier = Modifier.padding(4.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
 
+            for (index in state.stories.indices) {
+                val story = state.stories[index]
                 LinearIndicator(
-                    modifier = Modifier.width(175.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .alpha(alpha = alpha),
                     progressValue = story.progress,
-                    startProgress = story.isLoaded
+                    startProgress = story.isLoaded,
+                    onPauseTimer = pauseTimer
                 ) {
                     coroutineScope.launch {
                         if (currentPage < state.stories.size - 1) {
@@ -120,7 +127,6 @@ fun StoriesScreen(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.padding(4.dp))
             }
         }
     }
