@@ -33,7 +33,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @Composable
 fun PictureListScreen(
     navController: NavController,
-    viewModel: PictureListViewModel = hiltViewModel()
+    viewModel: PictureListViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.value
     val text = remember {
@@ -58,7 +58,7 @@ fun PictureListScreen(
                         contentDescription = picture.description!!,
                         onItemClick = {
                             navController.navigate(
-                                Screen.StoriesScreen.route + "/${
+                                route = Screen.StoriesScreen.route + "/${
                                     picture.regular?.replace(
                                         ":",
                                         "%3A"
@@ -68,7 +68,7 @@ fun PictureListScreen(
                                         ":",
                                         "%3A"
                                     )?.replace("/", "%2F")
-                                }"
+                                }" + "/${picture.username}"
                             )
                         }
                     )

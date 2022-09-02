@@ -119,4 +119,6 @@ dependencies {
 
     //ViewPager
     implementation "com.google.accompanist:accompanist-pager:0.16.0"
+
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
 }

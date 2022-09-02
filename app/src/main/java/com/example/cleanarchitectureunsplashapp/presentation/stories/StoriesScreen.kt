@@ -7,16 +7,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.cleanarchitectureunsplashapp.presentation.Screen
 import com.example.cleanarchitectureunsplashapp.presentation.stories.components.LinearIndicator
 import com.example.cleanarchitectureunsplashapp.presentation.stories.components.StoryImage
+import com.example.cleanarchitectureunsplashapp.presentation.stories.components.UserImageNameStoryItem
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 fun StoriesScreen(
     pictureUrl: String?,
     userPictureUrl: String?,
+    username: String,
     viewModel: StoriesViewModel = hiltViewModel(),
     navController: NavController,
 ) {
@@ -105,29 +107,41 @@ fun StoriesScreen(
             },
         )
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Column {
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween) {
 
-            for (index in state.stories.indices) {
-                val story = state.stories[index]
-                LinearIndicator(
-                    modifier = Modifier
-                        .weight(1f)
-                        .alpha(alpha = alpha),
-                    progressValue = story.progress,
-                    startProgress = story.isLoaded,
-                    onPauseTimer = pauseTimer
-                ) {
-                    coroutineScope.launch {
-                        if (currentPage < state.stories.size - 1) {
-                            viewModel.onEvent(StoriesEvent.RightTap(currentPage))
-                            currentPage++
-                            pagerState.animateScrollToPage(currentPage)
-                        } else {
-                            navController.navigate(Screen.PictureListScreen.route)
+                for (index in state.stories.indices) {
+                    val story = state.stories[index]
+                    LinearIndicator(
+                        modifier = Modifier
+                            .weight(1f)
+                            .alpha(alpha = alpha),
+                        progressValue = story.progress,
+                        startProgress = story.isLoaded,
+                        onPauseTimer = pauseTimer
+                    ) {
+                        coroutineScope.launch {
+                            if (currentPage < state.stories.size - 1) {
+                                viewModel.onEvent(StoriesEvent.RightTap(currentPage))
+                                currentPage++
+                                pagerState.animateScrollToPage(currentPage)
+                            } else {
+                                navController.navigate(
+                                    route = Screen.PictureListScreen.route,
+                                )
+                            }
                         }
                     }
                 }
             }
+
+            UserImageNameStoryItem(
+                modifier = Modifier.alpha(alpha = alpha),
+                painter = rememberImagePainter(data = userPicture),
+                username = username,
+                contentDescription = "description"
+            )
         }
     }
 }
