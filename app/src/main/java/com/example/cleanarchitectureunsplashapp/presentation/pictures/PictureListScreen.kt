@@ -93,18 +93,20 @@ fun PictureListScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     items(state.pictures) { picture ->
-                        val color = remember {
-                            mutableStateOf(Color.Black)
-                        }
                         PictureListItem(
                             painterBaseImage = rememberImagePainter(picture.regular),
                             painterUserImage = rememberImagePainter(picture.small),
                             username = picture.username!!,
                             contentDescription = picture.description!!,
-                            color = color,
+                            liked = picture.isLiked,
                             onDeleteClick = {
                                 viewModel.onEvent(
                                     PictureListEvent.DeletePicture(picture, text.value.text)
+                                )
+                            },
+                            onLikeClick = {
+                                viewModel.onEvent(
+                                    PictureListEvent.LikePicture(picture.id)
                                 )
                             })
                     }

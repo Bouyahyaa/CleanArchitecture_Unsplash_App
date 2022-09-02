@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PictureListViewModel @Inject constructor(
     private val getPicturesUseCase: GetPicturesUseCase,
-    private val deletePicturesUseCase: DeletePicturesUseCase
+    private val deletePicturesUseCase: DeletePicturesUseCase,
 ) : ViewModel() {
 
     private val _state = mutableStateOf(PictureListState())
@@ -56,6 +56,19 @@ class PictureListViewModel @Inject constructor(
                     getPictures(query = event.query, fetchFromRemote = false)
                 }
             }
+
+            is PictureListEvent.LikePicture -> {
+                val pictures = _state.value.pictures.map { picture ->
+                    if (picture.id == event.id) {
+                        picture.copy(isLiked = !picture.isLiked)
+                    } else {
+                        picture
+                    }
+                }
+                _state.value = state.value.copy(
+                    pictures = pictures
+                )
+            }
         }
     }
 
@@ -88,5 +101,4 @@ class PictureListViewModel @Inject constructor(
             }
         }
     }
-
 }

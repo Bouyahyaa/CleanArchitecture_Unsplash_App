@@ -7,11 +7,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -25,8 +26,9 @@ fun PictureListItem(
     painterUserImage: Painter,
     username: String,
     contentDescription: String,
-    color: MutableState<Color>,
-    onDeleteClick: () -> Unit
+    liked: Boolean,
+    onDeleteClick: () -> Unit,
+    onLikeClick: () -> Unit,
 ) {
 
     Card(
@@ -43,15 +45,13 @@ fun PictureListItem(
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color.Transparent, color.value
+                            Color.Transparent, Color.Black
                         ), startY = 300f
                     )
                 )
                 .fillMaxSize()
                 .clickable {
-                    color.value = Color(
-                        Random.nextFloat(), Random.nextFloat(), Random.nextFloat(), 1f
-                    )
+
                 }) {
                 IconButton(
                     onClick = onDeleteClick,
@@ -75,6 +75,26 @@ fun PictureListItem(
                     username = username,
                     contentDescription = contentDescription
                 )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                IconButton(
+                    onClick = onLikeClick,
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .background(color = Color.Transparent)
+                            .padding(start = 15.dp)
+                            .alpha(alpha = if (liked) 1f else 0.5f),
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Love Picture",
+                        tint = if (liked) Color.Red else Color.LightGray,
+                    )
+                }
             }
         }
     }

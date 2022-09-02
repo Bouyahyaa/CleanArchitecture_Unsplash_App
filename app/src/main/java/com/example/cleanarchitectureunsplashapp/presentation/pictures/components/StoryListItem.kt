@@ -18,7 +18,8 @@ import androidx.compose.ui.unit.dp
 fun StoryListItem(
     painterStoryImage: Painter,
     contentDescription: String,
-    onItemClick: () -> Unit
+    seen: Boolean = false,
+    onItemClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -27,7 +28,12 @@ fun StoryListItem(
             .padding(12.dp)
             .border(
                 width = 2.dp,
-                brush = Brush.horizontalGradient(
+                brush = if (seen) Brush.horizontalGradient(
+                    colors = listOf(
+                        Color(0xFF707070),
+                        Color(0xFF888888)
+                    ),
+                ) else Brush.horizontalGradient(
                     colors = listOf(
                         Color(0xFFF71458),
                         Color(0xFFFA95AC)

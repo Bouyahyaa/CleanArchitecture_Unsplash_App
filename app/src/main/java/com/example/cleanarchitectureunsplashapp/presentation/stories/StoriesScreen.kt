@@ -26,25 +26,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun StoriesScreen(
-    pictureUrl: String?,
     userPictureUrl: String?,
     username: String,
-    viewModel: StoriesViewModel = hiltViewModel(),
     navController: NavController,
+    viewModel: StoriesViewModel = hiltViewModel(),
 ) {
-    val basePicture = pictureUrl?.replace(
-        "%3A", ":"
-    )?.replace("%2F", "/")
 
     val userPicture = userPictureUrl?.replace(
         "%3A", ":"
     )?.replace("%2F", "/")
-
-    val listImages = listOf(
-        basePicture, userPicture, basePicture, userPicture
-    )
-
-    viewModel.onEvent(StoriesEvent.GetStories(listOfImages = listImages))
 
     val state = viewModel.state.value
 
@@ -127,8 +117,9 @@ fun StoriesScreen(
                                 currentPage++
                                 pagerState.animateScrollToPage(currentPage)
                             } else {
-                                navController.navigate(
-                                    route = Screen.PictureListScreen.route,
+                                navController.popBackStack(
+                                    inclusive = false,
+                                    route = Screen.PictureListScreen.route
                                 )
                             }
                         }

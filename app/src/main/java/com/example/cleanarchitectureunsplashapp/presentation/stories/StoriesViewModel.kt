@@ -2,6 +2,7 @@ package com.example.cleanarchitectureunsplashapp.presentation.stories
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.cleanarchitectureunsplashapp.domain.model.Story
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,18 +10,29 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class StoriesViewModel @Inject constructor() : ViewModel() {
+class StoriesViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+) : ViewModel() {
 
     private val _state = mutableStateOf(StoriesState())
     val state: State<StoriesState> = _state
 
+    init {
+        val pictureUrl = savedStateHandle.get<String>("pictureUrl")?.replace(
+            "%3A", ":"
+        )?.replace("%2F", "/")
+        val userPictureUrl = savedStateHandle.get<String>("userPictureUrl")?.replace(
+            "%3A", ":"
+        )?.replace("%2F", "/")
+
+        val listImages = listOf(
+            pictureUrl, userPictureUrl
+        )
+        getStories(listOfImages = listImages)
+    }
+
     fun onEvent(event: StoriesEvent) {
         when (event) {
-            is StoriesEvent.GetStories -> {
-                if (_state.value.stories.isEmpty()) {
-                    getStories(listOfImages = event.listOfImages)
-                }
-            }
 
             is StoriesEvent.ImageLoaded -> {
                 val stories = _state.value.stories.map { story ->

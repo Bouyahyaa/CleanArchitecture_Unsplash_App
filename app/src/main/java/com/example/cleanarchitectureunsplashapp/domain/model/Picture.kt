@@ -25,4 +25,8 @@ data class Picture(
     val large: String?,
 
     val likes: String?,
+
+    val isLiked: Boolean = false,
+
+    val seen: Boolean = false,
 )
