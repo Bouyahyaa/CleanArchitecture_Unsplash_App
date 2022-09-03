@@ -5,13 +5,17 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
@@ -21,6 +25,7 @@ import com.example.cleanarchitectureunsplashapp.presentation.stories.components.
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalPagerApi::class)
@@ -56,8 +61,37 @@ fun StoriesScreen(
     var seen: Boolean by remember {
         mutableStateOf(false)
     }
+    var offsetY by remember { mutableStateOf(0f) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .offset {
+            IntOffset(0, offsetY.roundToInt())
+        }
+        .draggable(
+            orientation = Orientation.Vertical,
+            state = rememberDraggableState { delta ->
+                if (delta > 0f && offsetY < 350f) {
+                    offsetY += delta
+                }
+            },
+            startDragImmediately = false,
+            onDragStarted = {
+                pauseTimer = true
+            },
+            onDragStopped = {
+                pauseTimer = false
+                if (offsetY >= 350f) {
+                    navController.previousBackStackEntry?.savedStateHandle?.set("pictureId",
+                        pictureId)
+                    navController.previousBackStackEntry?.savedStateHandle?.set("seen",
+                        seen)
+                    navController.popBackStack()
+                } else {
+                    offsetY = 0f
+                }
+            }
+        )) {
 
         if (!seen) {
             seen = state.stories.size - 1 == currentPage
