@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 fun StoryListItem(
     painterStoryImage: Painter,
     contentDescription: String,
-    seen: Boolean = false,
+    seen: Boolean,
     onItemClick: () -> Unit,
 ) {
     Box(

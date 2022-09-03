@@ -1,6 +1,7 @@
 package com.example.cleanarchitectureunsplashapp.presentation.pictures
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -43,6 +44,12 @@ fun PictureListScreen(
         isRefreshing = state.isRefreshing
     )
 
+    val currentBackStackEntry = navController.currentBackStackEntry!!
+    val savedStateHandle = currentBackStackEntry.savedStateHandle
+
+    val pictureId = savedStateHandle.get<String>("pictureId")
+    val seen = savedStateHandle.get<Boolean>("seen")
+
     SwipeRefresh(state = swipeRefreshState, onRefresh = {
         viewModel.onEvent(PictureListEvent.Refresh)
     }) {
@@ -52,10 +59,16 @@ fun PictureListScreen(
                 .background(Color.Black),
         ) {
             LazyRow {
+                if (seen != null && seen && pictureId != null) {
+                    viewModel.onEvent(PictureListEvent.SeenPicture(pictureId))
+                    savedStateHandle.remove<String>("pictureId")
+                    savedStateHandle.remove<Boolean>("seen")
+                }
                 items(state.pictures) { picture ->
                     StoryListItem(
                         painterStoryImage = rememberImagePainter(picture.large),
                         contentDescription = picture.description!!,
+                        seen = picture.seen,
                         onItemClick = {
                             navController.navigate(
                                 route = Screen.StoriesScreen.route + "/${
@@ -68,7 +81,7 @@ fun PictureListScreen(
                                         ":",
                                         "%3A"
                                     )?.replace("/", "%2F")
-                                }" + "/${picture.username}"
+                                }" + "/${picture.username}" + "/${picture.id}"
                             )
                         }
                     )

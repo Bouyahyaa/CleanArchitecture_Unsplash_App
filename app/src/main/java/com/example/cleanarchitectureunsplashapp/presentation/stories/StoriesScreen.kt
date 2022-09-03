@@ -2,6 +2,7 @@ package com.example.cleanarchitectureunsplashapp.presentation.stories
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -14,7 +15,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.cleanarchitectureunsplashapp.presentation.Screen
 import com.example.cleanarchitectureunsplashapp.presentation.stories.components.LinearIndicator
 import com.example.cleanarchitectureunsplashapp.presentation.stories.components.StoryImage
 import com.example.cleanarchitectureunsplashapp.presentation.stories.components.UserImageNameStoryItem
@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 fun StoriesScreen(
     userPictureUrl: String?,
     username: String,
+    pictureId: String,
     navController: NavController,
     viewModel: StoriesViewModel = hiltViewModel(),
 ) {
@@ -52,7 +53,16 @@ fun StoriesScreen(
 
     val alpha: Float by animateFloatAsState(if (!pauseTimer) 1f else 0.00f)
 
+    var seen: Boolean by remember {
+        mutableStateOf(false)
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
+
+        if (!seen) {
+            seen = state.stories.size - 1 == currentPage
+        }
+
         StoryImage(
             modifier = Modifier
                 .background(Color.Black)
@@ -117,10 +127,11 @@ fun StoriesScreen(
                                 currentPage++
                                 pagerState.animateScrollToPage(currentPage)
                             } else {
-                                navController.popBackStack(
-                                    inclusive = false,
-                                    route = Screen.PictureListScreen.route
-                                )
+                                navController.previousBackStackEntry?.savedStateHandle?.set("pictureId",
+                                    pictureId)
+                                navController.previousBackStackEntry?.savedStateHandle?.set("seen",
+                                    seen)
+                                navController.popBackStack()
                             }
                         }
                     }
@@ -133,6 +144,14 @@ fun StoriesScreen(
                 username = username,
                 contentDescription = "description"
             )
+        }
+
+        BackHandler {
+            navController.previousBackStackEntry?.savedStateHandle?.set("pictureId",
+                pictureId)
+            navController.previousBackStackEntry?.savedStateHandle?.set("seen",
+                seen)
+            navController.popBackStack()
         }
     }
 }

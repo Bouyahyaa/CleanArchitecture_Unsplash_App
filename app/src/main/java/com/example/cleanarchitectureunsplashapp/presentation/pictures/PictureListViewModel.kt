@@ -69,6 +69,19 @@ class PictureListViewModel @Inject constructor(
                     pictures = pictures
                 )
             }
+
+            is PictureListEvent.SeenPicture -> {
+                val pictures = _state.value.pictures.map { picture ->
+                    if (picture.id == event.id && !picture.seen) {
+                        picture.copy(seen = true)
+                    } else {
+                        picture
+                    }
+                }
+                _state.value = state.value.copy(
+                    pictures = pictures
+                )
+            }
         }
     }
 

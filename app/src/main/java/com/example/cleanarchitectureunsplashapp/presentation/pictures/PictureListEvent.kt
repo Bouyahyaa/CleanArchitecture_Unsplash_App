@@ -6,5 +6,6 @@ sealed class PictureListEvent {
     data class OnSearchQueryChange(val query: String) : PictureListEvent()
     data class DeletePicture(val picture: Picture, val query: String) : PictureListEvent()
     data class LikePicture(val id: String) : PictureListEvent()
+    data class SeenPicture(val id: String) : PictureListEvent()
     object Refresh : PictureListEvent()
 }
