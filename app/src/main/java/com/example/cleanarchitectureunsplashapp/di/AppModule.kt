@@ -35,7 +35,7 @@ object AppModule {
     fun provideNoteDatabase(app: Application): UnsplashDatabase {
         return Room.databaseBuilder(
             app, UnsplashDatabase::class.java, UnsplashDatabase.DATABASE_NAME
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
 
@@ -47,7 +47,7 @@ object AppModule {
     @Singleton
     fun providePictureRepository(
         pictureLocalSource: PictureLocalSource,
-        pictureRemoteSource: PictureRemoteSource
+        pictureRemoteSource: PictureRemoteSource,
     ): PictureRepository {
         return PictureRepositoryImpl(pictureLocalSource, pictureRemoteSource)
     }

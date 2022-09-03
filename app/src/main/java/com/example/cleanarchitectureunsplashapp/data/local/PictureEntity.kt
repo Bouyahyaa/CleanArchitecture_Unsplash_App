@@ -29,4 +29,8 @@ data class PictureEntity(
     val large: String?,
 
     val likes: String?,
+
+    val isLiked: Boolean = false,
+
+    val seen: Boolean = false,
 ) : java.io.Serializable

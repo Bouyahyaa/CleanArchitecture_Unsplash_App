@@ -14,12 +14,12 @@ import javax.inject.Inject
 
 class PictureRepositoryImpl @Inject constructor(
     private val pictureLocalSource: PictureLocalSource,
-    private val pictureRemoteSource: PictureRemoteSource
+    private val pictureRemoteSource: PictureRemoteSource,
 ) : PictureRepository {
 
     override suspend fun getPictures(
         query: String,
-        fetchFromRemote: Boolean
+        fetchFromRemote: Boolean,
     ): List<Picture> {
         val localPictures = pictureLocalSource.getPictures(query)
         var remotePictures: List<PictureDto> = emptyList()
@@ -56,5 +56,15 @@ class PictureRepositoryImpl @Inject constructor(
     override suspend fun deletePictures(picture: Picture) {
         val pictureEntity = picture.toPictureEntity()
         pictureLocalSource.deletePicture(pictureEntity)
+    }
+
+    override suspend fun likePictures(picture: Picture) {
+        val pictureEntity = picture.toPictureEntity()
+        pictureLocalSource.updatePicture(pictureEntity)
+    }
+
+    override suspend fun seePictures(picture: Picture) {
+        val pictureEntity = picture.toPictureEntity()
+        pictureLocalSource.updatePicture(pictureEntity)
     }
 }

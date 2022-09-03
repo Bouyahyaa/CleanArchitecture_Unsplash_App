@@ -5,4 +5,6 @@ import com.example.cleanarchitectureunsplashapp.domain.model.Picture
 interface PictureRepository {
     suspend fun getPictures(query: String, fetchFromRemote: Boolean): List<Picture>
     suspend fun deletePictures(picture: Picture)
+    suspend fun likePictures(picture: Picture)
+    suspend fun seePictures(picture: Picture)
 }

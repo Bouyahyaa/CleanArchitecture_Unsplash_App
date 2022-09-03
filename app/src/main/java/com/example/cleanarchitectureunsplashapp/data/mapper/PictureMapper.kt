@@ -24,6 +24,8 @@ fun PictureEntity.toPicture(): Picture {
         medium = medium,
         large = large,
         likes = likes,
+        isLiked = isLiked,
+        seen = seen
     )
 }
 
@@ -48,6 +50,8 @@ fun Picture.toPictureEntity(): PictureEntity {
         medium = medium,
         large = large,
         likes = likes,
+        isLiked = isLiked,
+        seen = seen
     )
 }
 

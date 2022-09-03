@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [PictureEntity::class],
-    version = 2
+    version = 5
 )
 
 abstract class UnsplashDatabase : RoomDatabase() {

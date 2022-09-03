@@ -20,6 +20,9 @@ interface UnsplashDao {
     @Delete
     suspend fun deletePicture(picture: PictureEntity)
 
+    @Update
+    suspend fun updatePicture(picture: PictureEntity)
+
     @Query("DELETE FROM pictures")
     suspend fun clearPictures()
 }

@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cleanarchitectureunsplashapp.core.Resource
 import com.example.cleanarchitectureunsplashapp.domain.use_case.DeletePictures.DeletePicturesUseCase
+import com.example.cleanarchitectureunsplashapp.domain.use_case.SeePictures.SeePicturesUseCase
 import com.example.cleanarchitectureunsplashapp.domain.use_case.getPictures.GetPicturesUseCase
+import com.example.cleanarchitectureunsplashapp.domain.use_case.likePictures.LikePicturesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,6 +20,8 @@ import javax.inject.Inject
 class PictureListViewModel @Inject constructor(
     private val getPicturesUseCase: GetPicturesUseCase,
     private val deletePicturesUseCase: DeletePicturesUseCase,
+    private val likePicturesUseCase: LikePicturesUseCase,
+    private val seePicturesUseCase: SeePicturesUseCase,
 ) : ViewModel() {
 
     private val _state = mutableStateOf(PictureListState())
@@ -34,7 +38,9 @@ class PictureListViewModel @Inject constructor(
         when (event) {
 
             is PictureListEvent.Refresh -> {
-                getPictures(query = "", fetchFromRemote = true)
+                viewModelScope.launch {
+                    getPictures(query = "", fetchFromRemote = true)
+                }
             }
 
             is PictureListEvent.OnSearchQueryChange -> {
@@ -53,34 +59,40 @@ class PictureListViewModel @Inject constructor(
             is PictureListEvent.DeletePicture -> {
                 viewModelScope.launch {
                     deletePicturesUseCase.invoke(event.picture)
-                    getPictures(query = event.query, fetchFromRemote = false)
+                    getPictures(event.query, false)
                 }
             }
 
             is PictureListEvent.LikePicture -> {
-                val pictures = _state.value.pictures.map { picture ->
-                    if (picture.id == event.id) {
-                        picture.copy(isLiked = !picture.isLiked)
-                    } else {
-                        picture
+                viewModelScope.launch {
+                    val pictures = _state.value.pictures.map { picture ->
+                        if (picture.id == event.id) {
+                            likePicturesUseCase.invoke(picture.copy(isLiked = !picture.isLiked))
+                            picture.copy(isLiked = !picture.isLiked)
+                        } else {
+                            picture
+                        }
                     }
+                    _state.value = state.value.copy(
+                        pictures = pictures
+                    )
                 }
-                _state.value = state.value.copy(
-                    pictures = pictures
-                )
             }
 
             is PictureListEvent.SeenPicture -> {
-                val pictures = _state.value.pictures.map { picture ->
-                    if (picture.id == event.id && !picture.seen) {
-                        picture.copy(seen = true)
-                    } else {
-                        picture
+                viewModelScope.launch {
+                    val pictures = _state.value.pictures.map { picture ->
+                        if (picture.id == event.id && !picture.seen) {
+                            seePicturesUseCase.invoke(picture.copy(seen = true))
+                            picture.copy(seen = true)
+                        } else {
+                            picture
+                        }
                     }
+                    _state.value = state.value.copy(
+                        pictures = pictures
+                    )
                 }
-                _state.value = state.value.copy(
-                    pictures = pictures
-                )
             }
         }
     }
