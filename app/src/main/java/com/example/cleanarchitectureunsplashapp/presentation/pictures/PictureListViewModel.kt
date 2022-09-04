@@ -58,8 +58,13 @@ class PictureListViewModel @Inject constructor(
 
             is PictureListEvent.DeletePicture -> {
                 viewModelScope.launch {
+                    val pictures = _state.value.pictures.filter {
+                        it.id != event.picture.id
+                    }
+                    _state.value = state.value.copy(
+                        pictures = pictures
+                    )
                     deletePicturesUseCase.invoke(event.picture)
-                    getPictures(event.query, false)
                 }
             }
 

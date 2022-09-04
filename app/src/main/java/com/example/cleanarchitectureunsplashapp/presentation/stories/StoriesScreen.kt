@@ -65,6 +65,7 @@ fun StoriesScreen(
 
     Box(modifier = Modifier
         .fillMaxSize()
+        .background(color = Color.Black)
         .offset {
             IntOffset(0, offsetY.roundToInt())
         }
