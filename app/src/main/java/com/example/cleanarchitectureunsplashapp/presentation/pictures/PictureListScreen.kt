@@ -1,7 +1,6 @@
 package com.example.cleanarchitectureunsplashapp.presentation.pictures
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.cleanarchitectureunsplashapp.presentation.Screen
+import com.example.cleanarchitectureunsplashapp.core.Screen
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.PictureListItem
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.SearchView
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.components.StoryListItem
@@ -68,7 +67,7 @@ fun PictureListScreen(
                     StoryListItem(
                         painterStoryImage = rememberImagePainter(picture.large),
                         contentDescription = picture.description!!,
-                        seen = picture.seen,
+                        isSeen = picture.seen,
                         onItemClick = {
                             navController.navigate(
                                 route = Screen.StoriesScreen.route + "/${

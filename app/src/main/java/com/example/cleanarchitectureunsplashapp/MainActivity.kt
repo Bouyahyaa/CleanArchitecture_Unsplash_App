@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.cleanarchitectureunsplashapp.presentation.Screen
+import com.example.cleanarchitectureunsplashapp.core.Screen
 import com.example.cleanarchitectureunsplashapp.presentation.pictures.PictureListScreen
 import com.example.cleanarchitectureunsplashapp.presentation.stories.StoriesScreen
 import com.example.cleanarchitectureunsplashapp.ui.theme.CleanArchitectureUnsplashAppTheme

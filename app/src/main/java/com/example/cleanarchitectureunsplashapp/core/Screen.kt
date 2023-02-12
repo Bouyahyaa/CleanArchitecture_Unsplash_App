@@ -1,4 +1,4 @@
-package com.example.cleanarchitectureunsplashapp.presentation
+package com.example.cleanarchitectureunsplashapp.core
 
 sealed class Screen(val route: String) {
     object PictureListScreen : Screen("picture_list_screen")

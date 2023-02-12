@@ -32,7 +32,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNoteDatabase(app: Application): UnsplashDatabase {
+    fun provideUnsplashDatabase(app: Application): UnsplashDatabase {
         return Room.databaseBuilder(
             app, UnsplashDatabase::class.java, UnsplashDatabase.DATABASE_NAME
         ).fallbackToDestructiveMigration().build()
